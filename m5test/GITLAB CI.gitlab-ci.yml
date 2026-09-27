@@ -1,0 +1,21 @@
+image: DockerFile
+
+services:
+- docker:dind
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  CONTAINER_IMAGE: registry.gitlab.com/codebabel/M5casestudy
+  #Workaround https://gitlab.com/gitlab-org/gitlab-ce/issues/23339
+
+before_script:
+  - docker login -u gitlab-ci-token -p 01a55cae3bf29e7af221842f48d613df4b07482a registry.gitlab.com
+stages:
+  - build and stage
+
+job 1:
+  stage: build and stage
+  script:
+   - docker build -t $CONTAINER_IMAGE:$CI_COMMIT_SHA .
+   - docker push $CONTAINER_IMAGE:$CI_COMMIT_SHA
